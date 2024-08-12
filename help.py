@@ -139,6 +139,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from collections import defaultdict
+import json
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -177,7 +178,25 @@ def summarize_article(article, max_sentences=5):
     return ' '.join(summary_sentences)
 
 
+def load_data():
+    with open('data.json', 'r') as file:
+        data = json.load(file)
+    return data
+
 st.title("Hello there!")
+
+# Section for keyword search
+st.subheader("Keyword Search")
+keyword_data = load_data()
+keyword = st.text_input("Enter topic", placeholder="e.g., vector algebra, quantum physics...")
+
+if keyword:
+    keyword = keyword.lower()  # Make search case-insensitive
+    response = keyword_data.get(keyword, "Keyword not found. Please try another one.")
+    st.write(response)
+
+# Section for URL summarization
+st.subheader("Article Summarization")
 url = st.text_input("Enter URL", placeholder="Paste URL here ")
 
 if url:
@@ -193,8 +212,6 @@ if url:
     st.write(','.join(key))
 
     summary = summarize_article(article)
-    # st.subheader("Summary")
-    # st.write(summary)
 
     tab1, tab2 = st.tabs(['Full Article', 'Summary'])
     with tab1:
